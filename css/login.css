@@ -1,28 +1,99 @@
-body{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    background-color: #05258d;
+/* Mengatur tampilan dasar */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #0f1a27; /* Latar belakang gelap */
+    color: #ffffff;
+}
+
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: #16232e; /* Warna background card */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 100%;
+}
+
+.login-icon {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #00bcd4; /* Warna teks judul */
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Gaya input dan label */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    font-size: 0.8rem;
+    color: #b0bec5;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.navbar-brand{
-    font-family: 'Righteous', cursive;
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid #00bcd4; /* Garis bawah warna cyan */
+    background-color: transparent;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.3s;
 }
 
-.login {
-    border: 0;
-    height: 500px;
-    margin: auto;
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-bottom-color: #29e3f0;
 }
 
-.login h4{
-    margin-top: 100px;
+/* Gaya tombol login */
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #00bcd4;
+    background-color: transparent;
+    color: #00bcd4;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-form .form-group input{
-    margin: auto;
-}
-
-form .user input{
-    margin: auto;
-    margin-top: 70px;
+button[type="submit"]:hover {
+    background-color: #00bcd4;
+    color: #16232e;
 }

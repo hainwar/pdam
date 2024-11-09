@@ -11,7 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -24,22 +23,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `siswa`
+-- Struktur dari tabel `pdam`
 --
-
 CREATE TABLE `pdam` (
-  'id' int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `bulan` varchar(20) NOT NULL,
   `uraian` varchar(255) NOT NULL,
   `jumlah` int NOT NULL,
-  PRIMARY KEY (`bulan`, `uraian`)
+  PRIMARY KEY (`id`) -- Menjadikan id sebagai primary key
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `siswa`
+-- Dumping data untuk tabel `pdam`
 --
-
--- Mengisi data untuk tabel `pdam`
 INSERT INTO `pdam` (`uraian`, `bulan`, `jumlah`) VALUES
 ('Kubikasi Meter Pelanggan', 'Januari', 4075346),
 ('Kubikasi Meter Pelanggan', 'Februari', 4075346),
@@ -51,7 +47,7 @@ INSERT INTO `pdam` (`uraian`, `bulan`, `jumlah`) VALUES
 ('Kubikasi Meter Pelanggan', 'Agustus', 4305457),
 ('Kubikasi Meter Pelanggan', 'September', 4070285),
 ('Kubikasi Meter Pelanggan', 'Oktober', 3688611),
-('Kubikasi Meter Pelanggan', 'November', 3589677 ),
+('Kubikasi Meter Pelanggan', 'November', 3589677),
 ('Kubikasi Meter Pelanggan', 'Desember', 3980635),
 ('Tangki TNI/POLRI', 'Januari', 10),
 ('Tangki TNI/POLRI', 'Februari', 103),
@@ -64,52 +60,26 @@ INSERT INTO `pdam` (`uraian`, `bulan`, `jumlah`) VALUES
 ('Tangki TNI/POLRI', 'September', 756),
 ('Tangki TNI/POLRI', 'Oktober', 744),
 ('Tangki TNI/POLRI', 'November', 693),
-('Tangki TNI/POLRI', 'Desember', 168),
+('Tangki TNI/POLRI', 'Desember', 168);
 
 -- --------------------------------------------------------
 
 --
 -- Struktur dari tabel `user`
 --
-
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT, -- Tambahkan AUTO_INCREMENT di sini
   `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`) -- Menjadikan id sebagai primary key
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data untuk tabel `user`
 --
+INSERT INTO `user` (`username`, `password`) VALUES
+('admin', 'admin123'); -- Anda mungkin ingin mempertimbangkan menggunakan hashing untuk password
 
-INSERT INTO `user` (`id`, `username`, `password`) VALUES
-(2, 'admin', 'admin123');
-
---
--- Indexes for dumped tables
---
-
---
--- Indeks untuk tabel `siswa`
---
-ALTER TABLE `pdam`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indeks untuk tabel `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT untuk tabel yang dibuang
---
-
---
--- AUTO_INCREMENT untuk tabel `user`
---
-ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

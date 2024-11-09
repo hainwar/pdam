@@ -1,0 +1,212 @@
+/* style.css */
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.main-wrapper {
+    display: flex;
+}
+
+.sidebar {
+    background-color: #333;
+    color: #fff;
+    width: 190px;
+    height: 100vh;
+    transition: width 0.3s;
+    overflow-x: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .menu-toggle span,
+.sidebar.collapsed .menu-item span {
+    display: none;
+}
+
+.menu-toggle {
+    background-color: #333;
+    color: #73d5de;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    transition: width 0.3s;
+    font-weight: bold;
+    height: 60px;
+}
+
+.menu-toggle i {
+    margin-right: 10px;
+    font-size: 23px;
+}
+
+/* Header tetap di satu baris dengan sidebar */
+.main-content {
+    margin-left: 190px;
+    flex: 1;
+    transition: margin-left 0.3s;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: 60px;
+}
+
+.header {
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Kontainer Chart dengan Tinggi Terbatas */
+.chart-container {
+    position: relative;
+    height: 300px; /* Membatasi tinggi chart */
+    width: 100%;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.content {
+    padding: 20px;
+}
+
+.footer {
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+/* Hover effect untuk menu dan ikon */
+.menu-item {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s;
+    border-radius: 8px;
+}
+
+.menu-item:hover {
+    background-color: #444;
+}
+
+.menu-item i {
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.menu-item i.bi-house-door { color: #4CAF50; }
+.menu-item i.bi-speedometer2 { color: #FF9800; }
+.menu-item i.bi-info-circle { color: #2196F3; }
+.menu-item i.bi-gear { color: #FFC107; }
+.menu-item i.bi-box-arrow-right { color: #F44336; }
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 60px;
+    }
+
+    .sidebar {
+        width: 60px;
+    }
+}
+
+/* Kelas untuk menonaktifkan transisi sementara */
+.no-transition {
+    transition: none !important;
+}
+
+.about-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    padding-top: 90px;
+    color: #333;
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #0f7ef1;
+}
+
+.about-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.about-info p {
+    font-size: 1rem;
+    margin: 0 0 15px;
+    line-height: 1.5;
+}
+
+.about-info p strong {
+    color: #333;
+}
+
+.about-links {
+    margin-top: 20px;
+}
+
+.about-links h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.about-links a {
+    color: #0f7ef1;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.about-links a:hover {
+    color: #004080;
+}
+
+.about-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .about-content {
+        flex-direction: row;
+        text-align: left;
+    }
+}
+
+.copyright {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
