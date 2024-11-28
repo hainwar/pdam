@@ -25,7 +25,7 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/sidebar.css"> <!-- File CSS Eksternal -->
 
     <title>PHP Native | CRUD PDAM</title>
@@ -36,11 +36,6 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
             font-size: <?= $fontSize; ?>;
         }
 
-        .sidebar {
-            background-color: <?= $sidebarColor == 'dark' ? '#333' : '#f8f9fa'; ?>;
-            color: <?= $sidebarColor == 'dark' ? '#ffffff' : '#212529'; ?>;
-        }
-
         .header {
             background-color: <?= $colorScheme; ?>;
         }
@@ -48,6 +43,11 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
         .btn-primary {
             background-color: <?= $colorScheme; ?>;
             border-color: <?= $colorScheme; ?>;
+        }
+
+        .welcome-section {
+            background-color: #f8f9fa;
+            padding: 20px 0;
         }
     </style>
 </head>
@@ -65,45 +65,51 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
             PHP Native | CRUD PDAM
         </div>
 
-        <!-- Konten -->
-        <div class="content">
-            <div class="container mt-4">
-                <h3 class="text-center fw-bold text-uppercase">Data PDAM</h3>
-                <hr>
-                <div class="my-2">
-                    <a href="addData.php" class="btn btn-primary"><i class="bi bi-person-plus-fill"></i> Tambah Data</a>
-                    <a href="export.php" target="_blank" class="btn btn-success ms-1"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Ekspor ke Excel</a>
+        <!-- Selamat Datang Section -->
+        <div class="welcome-section text-white">
+            <!-- Carousel -->
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+                <!-- Indicators -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
                 </div>
 
-                <!-- Tabel Data -->
-                <div class="my-3">
-                    <table id="data" class="table table-striped table-responsive table-hover text-center" style="width:100%">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>No.</th>
-                                <th>Uraian</th>
-                                <th>Bulan</th>
-                                <th>Jumlah</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1; ?>
-                            <?php foreach ($pdam as $row) : ?>
-                                <tr>
-                                    <td><?= $no++; ?></td>
-                                    <td><?= $row['uraian']; ?></td>
-                                    <td><?= $row['bulan']; ?></td>
-                                    <td><?= $row['jumlah']; ?></td>
-                                    <td>
-                                        <a href="ubah.php?id=<?= $row['id']; ?>" class="btn btn-warning btn-sm btn-action"><i class="bi bi-pencil-square"></i> Ubah</a> |
-                                        <a href="hapus.php?id=<?= $row['id']; ?>" class="btn btn-danger btn-sm btn-action" onclick="return confirm('Apakah anda yakin ingin menghapus data <?= $row['uraian']; ?> ?');"><i class="bi bi-trash-fill"></i> Hapus</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <!-- Slides -->
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="img/bg/pdam.jpg" class="d-block w-100" alt="Slide 1">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Slide Pertama</h5>
+                            <p>Keterangan untuk slide pertama.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/bg/pdam.jpg" class="d-block w-100" alt="Slide 2">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Slide Kedua</h5>
+                            <p>Keterangan untuk slide kedua.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/bg/pdam.jpg" class="d-block w-100" alt="Slide 3">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Slide Ketiga</h5>
+                            <p>Keterangan untuk slide ketiga.</p>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Sebelumnya</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Selanjutnya</span>
+                </button>
             </div>
         </div>
     </div>
@@ -121,6 +127,21 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
 <script>
     $(document).ready(function() {
         $('#data').DataTable(); // Inisialisasi DataTables
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const texts = ['Selamat Datang', 'PDAM Makassar'];
+        let index = 0;
+
+        const animatedText = document.getElementById('animated-text');
+        function changeText() {
+            animatedText.textContent = texts[index];
+            index = (index + 1) % texts.length;
+        }
+
+        // Jalankan perubahan teks setiap 3 detik
+        changeText();
+        setInterval(changeText, 3000);
     });
 
     // Fungsi untuk toggle sidebar

@@ -34,21 +34,25 @@ function tambah($data) {
     global $koneksi;
 
     // Menangkap data dari form
-    $uraian = htmlspecialchars($data["Uraian"]);
-    $jumlah = $data["Jumlah"]; // Tidak perlu htmlspecialchars
-    $bulan = htmlspecialchars($data["bulan"]);
+    $uraian = mysqli_real_escape_string($koneksi, htmlspecialchars($data["uraian"]));  // Sanitasi input
+    $jumlah = $data["jumlah"];  // Tidak perlu htmlspecialchars
+    $bulan = mysqli_real_escape_string($koneksi, htmlspecialchars($data["bulan"]));  // Sanitasi input
 
     // Validasi input jumlah: harus angka (integer atau float)
     if (!is_numeric($jumlah)) {
         return 0; // Jika bukan angka, gagal menyimpan data
     }
 
-    // Query untuk menambahkan data
-    $query = "INSERT INTO pdam (Uraian, Jumlah, Bulan)
-              VALUES ('$uraian', '$jumlah', '$bulan')";
-    mysqli_query($koneksi, $query);
+    // Query untuk menambahkan data (tanpa menyertakan kolom id, karena auto increment)
+    $query = "INSERT INTO pdam (Uraian, Jumlah, Bulan) VALUES ('$uraian', '$jumlah', '$bulan')";
 
-    return mysqli_affected_rows($koneksi); // Mengembalikan jumlah baris yang terpengaruh
+    if (mysqli_query($koneksi, $query)) {
+        return mysqli_affected_rows($koneksi); // Mengembalikan jumlah baris yang terpengaruh
+    } else {
+        // Menampilkan error jika query gagal
+        echo "Error: " . mysqli_error($koneksi);
+        return 0; // Gagal menambahkan data
+    }
 }
 
 // Membuat fungsi hapus

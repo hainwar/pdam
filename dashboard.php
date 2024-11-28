@@ -1,18 +1,41 @@
 <?php
-session_start();
-if (!isset($_SESSION['login'])) {
-    header('location:login.php');
-    exit;
+// Koneksi Database
+require 'function.php';
+$koneksi = mysqli_connect("localhost", "root", "", "phpdasar");
+
+if (!$koneksi) {
+    die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-$theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
+// Mengambil data jumlah berdasarkan bulan untuk Diagram Pie
+$bulanData = [
+    'Januari' => 0, 'Februari' => 0, 'Maret' => 0, 'April' => 0, 'Mei' => 0,
+    'Juni' => 0, 'Juli' => 0, 'Agustus' => 0, 'September' => 0, 'Oktober' => 0,
+    'November' => 0, 'Desember' => 0
+];
 
-// Default values
-$colorScheme = isset($_SESSION['colorScheme']) ? $_SESSION['colorScheme'] : '#007bff';
-$sidebarColor = isset($_SESSION['sidebarColor']) ? $_SESSION['sidebarColor'] : 'dark';
-$fontFamily = isset($_SESSION['fontFamily']) ? $_SESSION['fontFamily'] : 'Open Sans';
-$fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
+$query = "SELECT SUM(Jumlah) AS total, Bulan FROM pdam GROUP BY Bulan";
+$result = mysqli_query($koneksi, $query);
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $bulanData[$row['Bulan']] = $row['total'];
+}
+
+// Mengambil data terbanyak untuk Diagram Bar
+$queryMax = "SELECT Uraian, SUM(Jumlah) AS total FROM pdam GROUP BY Uraian ORDER BY total DESC LIMIT 5";
+$resultMax = mysqli_query($koneksi, $queryMax);
+
+$uraian = [];
+$total = [];
+
+while ($row = mysqli_fetch_assoc($resultMax)) {
+    $uraian[] = $row['Uraian'];
+    $total[] = $row['total'];
+}
+
+mysqli_close($koneksi);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -20,27 +43,43 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CRUD PDAM</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/sidebar.css"> <!-- File CSS Eksternal -->
-
-    <title>Dashboard</title>
-
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/sidebar.css">
     <style>
+        /* Mengatur ukuran canvas diagram */
+        #pieChart, #barChart {
+            max-width: 100%;
+            height: 300px;
+            padding-bottom: 40px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        /* Flexbox container untuk memastikan footer berada di bawah */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
         body {
             font-family: <?= $fontFamily; ?>, sans-serif;
             font-size: <?= $fontSize; ?>;
-        }
-
-        .sidebar {
-            background-color: <?= $sidebarColor == 'dark' ? '#333' : '#f8f9fa'; ?>;
-            color: <?= $sidebarColor == 'dark' ? '#ffffff' : '#212529'; ?>;
-        }
-
-        .header {
-            background-color: <?= $colorScheme; ?>;
         }
 
         .btn-primary {
@@ -51,154 +90,76 @@ $fontSize = isset($_SESSION['fontSize']) ? $_SESSION['fontSize'] : '14px';
 </head>
 
 <body>
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
 
-<div class="main-wrapper">
-    <!-- Sidebar -->
-    <?php include 'sidebar.php'; ?>
+        <!-- Konten Utama -->
+        <div class="main-content">
+            <div class="container mt-4 text-center">
+                <!-- Judul Dashboard -->
+                <h3 class="fw-bold text-uppercase">Dashboard</h3>
+                <hr>
 
-    <!-- Konten Utama -->
-    <div class="main-content">
-        <div class="header">
-            Dashboard
-        </div>
-
-        <div class="content">
-            <div class="container">
-                <!-- Ringkasan -->
-                <div class="row text-center">
-                    <div class="col-md-3 mb-4">
-                        <div class="card border-left-primary shadow h-100 py-2">
-                            <div class="card-body">
-                                <h5 class="font-weight-bold text-primary">100</h5>
-                                <p>Total Leads</p>
-                            </div>
-                        </div>
+                <!-- Diagram Pie dan Diagram Bar dalam satu baris -->
+                <div class="chart-container">
+                    <div style="flex: 1;">
+                        <canvas id="pieChart"></canvas>
                     </div>
-                    <div class="col-md-3 mb-4">
-                        <div class="card border-left-danger shadow h-100 py-2">
-                            <div class="card-body">
-                                <h5 class="font-weight-bold text-danger">80</h5>
-                                <p>Total Called Leads</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chart Section -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <h5 class="card-title">Costs</h5>
-                                <div class="chart-container">
-                                    <canvas id="costPieChart" height="300"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <h5 class="card-title">Leads</h5>
-                                <div class="chart-container">
-                                    <canvas id="leadsBarChart" height="300"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                    <div style="flex: 1;">E
+                        <canvas id="barChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <?php include 'footer.php'; ?>
     </div>
-</div>
 
-<!-- Footer -->
-<?php include 'footer.php'; ?>
+    <!-- Script JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- JavaScript untuk Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Pie Chart for Costs
-    new Chart(document.getElementById('costPieChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Cost in time frame', 'Cost per application', 'Cost per sale'],
-            datasets: [{
-                data: [41017.77, 57907.44, 21715.29],
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Menonaktifkan rasio aspek agar sesuai kontainer
-        }
-    });
+    <script>
+        // Diagram Pie (Distribusi Jumlah per Bulan)
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+                datasets: [{
+                    label: 'Jumlah per Bulan',
+                    data: <?php echo json_encode(array_values($bulanData)); ?>,
+                    backgroundColor: ['#FF5733', '#FFBD33', '#FFDA33', '#75FF33', '#33FF57', '#33FFBD', '#33DAFF', '#3357FF', '#5733FF', '#BD33FF', '#FF33DA', '#FF3357'],
+                    borderColor: ['#FF5733', '#FFBD33', '#FFDA33', '#75FF33', '#33FF57', '#33FFBD', '#33DAFF', '#3357FF', '#5733FF', '#BD33FF', '#FF33DA', '#FF3357'],
+                    borderWidth: 1
+                }]
+            }
+        });
 
-    // Bar Chart for Leads
-    new Chart(document.getElementById('leadsBarChart'), {
-        type: 'bar',
-        data: {
-            labels: ['Abstergo', 'Acme Co.', 'Barone'],
-            datasets: [{
-                label: 'Total Leads',
-                data: [600, 400, 300],
-                backgroundColor: '#4e73df',
-            }, {
-                label: 'Bad Leads',
-                data: [200, 150, 100],
-                backgroundColor: '#e74a3b',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Menonaktifkan rasio aspek agar sesuai kontainer
-            scales: {
-                y: {
-                    beginAtZero: true
+        // Diagram Bar (Jumlah Terbanyak)
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($uraian); ?>,
+                datasets: [{
+                    label: 'Jumlah Terbanyak',
+                    data: <?php echo json_encode($total); ?>,
+                    backgroundColor: '#4CAF50',
+                    borderColor: '#388E3C',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
-
-    // Fungsi untuk toggle sidebar
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('collapsed');
-
-        // Simpan status sidebar ke localStorage
-        if (sidebar.classList.contains('collapsed')) {
-            localStorage.setItem('sidebarStatus', 'collapsed');
-        } else {
-            localStorage.setItem('sidebarStatus', 'expanded');
-        }
-    }
-
-    // Saat halaman dimuat, cek status sidebar di localStorage
-    document.addEventListener('DOMContentLoaded', () => {
-        const sidebarStatus = localStorage.getItem('sidebarStatus');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-content');
-
-        sidebar.classList.add('no-transition');
-        mainContent.classList.add('no-transition');
-
-        if (sidebarStatus === 'collapsed') {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('collapsed');
-        } else {
-            sidebar.classList.remove('collapsed');
-            mainContent.classList.remove('collapsed');
-        }
-
-        setTimeout(() => {
-            sidebar.classList.remove('no-transition');
-            mainContent.classList.remove('no-transition');
-        }, 100);
-    });
-</script>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-
+        });
+    </script>
 </body>
+
 </html>
